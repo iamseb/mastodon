@@ -286,6 +286,11 @@
     }
   }
 
+  .MathJax, .MathJax_Display {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
   a {
     color: $color2;
     text-decoration: none;

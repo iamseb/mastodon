@@ -27,6 +27,9 @@ const StatusContent = React.createClass({
 
   componentDidMount () {
     const node  = ReactDOM.findDOMNode(this);
+
+    MathJax.Hub.Queue(['Typeset',MathJax.Hub,node]);
+
     const links = node.querySelectorAll('a');
 
     for (var i = 0; i < links.length; ++i) {
