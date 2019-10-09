@@ -17,6 +17,8 @@
     = preload_pack_asset "locale/#{I18n.locale}-json.js"
     = render_initial_state
     = javascript_pack_tag 'public', integrity: true, crossorigin: 'anonymous'
+    %script{:src => "/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"}
+
   %body.embed
     = yield
 
