@@ -576,6 +576,33 @@ const fetchComposeSuggestionsTags = throttle((dispatch, getState, token) => {
   });
 }, 200, { leading: true, trailing: true });
 
+const fetchComposeSuggestionsLatex = (dispatch, getState, token) => {
+  const start_delimiter = token.slice(0,2);
+  const end_delimiter = {'\\(': '\\)', '\\[': '\\]'}[start_delimiter];
+  let expression = token.slice(2).replace(/\\\)?$/,'');
+  let brace = 0;
+  for(let i=0;i<expression.length;i++) {
+    switch(expression[i]) {
+    case '\\':
+        i += 1;
+        break;
+    case '{':
+        brace += 1;
+        break;
+    case '}':
+        brace -= 1;
+        break;
+    }
+  }
+  for(;brace;brace--) {
+    expression += '}';
+  }
+  const results = [
+    { start_delimiter, end_delimiter, expression }
+  ];
+  dispatch(readyComposeSuggestionsLatex(token, results));
+};
+
 export function fetchComposeSuggestions(token) {
   return (dispatch, getState) => {
     switch (token[0]) {
@@ -585,12 +612,23 @@ export function fetchComposeSuggestions(token) {
     case '#':
       fetchComposeSuggestionsTags(dispatch, getState, token);
       break;
+    case '\\':
+      fetchComposeSuggestionsLatex(dispatch, getState, token);
+      break;
     default:
       fetchComposeSuggestionsAccounts(dispatch, getState, token);
       break;
     }
   };
 }
+
+export function readyComposeSuggestionsLatex(token, latex) {
+  return {
+    type: COMPOSE_SUGGESTIONS_READY,
+    token,
+    latex,
+  };
+};
 
 export function readyComposeSuggestionsEmojis(token, emojis) {
   return {
@@ -629,6 +667,9 @@ export function selectComposeSuggestion(position, token, suggestion, path) {
     } else if (suggestion.type === 'account') {
       completion    = getState().getIn(['accounts', suggestion.id, 'acct']);
       startPosition = position;
+    } else if (suggestion.type === 'latex') {
+      completion = `${suggestion.start_delimiter}${suggestion.expression}${suggestion.end_delimiter}`;
+      startPosition = position - 1;
     }
 
     // We don't want to replace hashtags that vary only in case due to accessibility, but we need to fire off an event so that
