@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 import classNames from 'classnames';
-import try_replace from '../features/compose/util/autolatex.js';
+import tex_to_unicode from '../features/compose/util/autolatex/autolatex.js';
 
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ImmutablePureComponent from 'react-immutable-pure-component';
@@ -98,10 +98,6 @@ export default class AutosuggestTextarea extends ImmutablePureComponent {
 
     this.props.onChange(e);
   };
-
-  onInput = (e) => {
-    try_replace(e.target);
-  }
 
   onKeyDown = (e) => {
     const { suggestions, disabled } = this.props;
