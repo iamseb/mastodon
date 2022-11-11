@@ -60,6 +60,7 @@ export const COMPOSE_COMPOSING_CHANGE    = 'COMPOSE_COMPOSING_CHANGE';
 export const COMPOSE_LANGUAGE_CHANGE     = 'COMPOSE_LANGUAGE_CHANGE';
 
 export const COMPOSE_EMOJI_INSERT = 'COMPOSE_EMOJI_INSERT';
+export const COMPOSE_START_LATEX  = 'COMPOSE_START_LATEX';
 
 export const COMPOSE_UPLOAD_CHANGE_REQUEST     = 'COMPOSE_UPLOAD_UPDATE_REQUEST';
 export const COMPOSE_UPLOAD_CHANGE_SUCCESS     = 'COMPOSE_UPLOAD_UPDATE_SUCCESS';
@@ -802,6 +803,14 @@ export function insertEmojiCompose(position, emoji, needsSpace) {
     needsSpace,
   };
 }
+
+export function startLaTeXCompose(position, delimiter) {
+  return {
+    type: COMPOSE_START_LATEX,
+    position,
+    delimiter,
+  };
+};
 
 export function changeComposing(value) {
   return {

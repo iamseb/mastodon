@@ -17,6 +17,7 @@ import Button from '../../../components/button';
 import EmojiPickerDropdown from '../containers/emoji_picker_dropdown_container';
 import LanguageDropdown from '../containers/language_dropdown_container';
 import PollButtonContainer from '../containers/poll_button_container';
+import LaTeXDropdown from '../containers/latex_dropdown_container.js';
 import PollFormContainer from '../containers/poll_form_container';
 import PrivacyDropdownContainer from '../containers/privacy_dropdown_container';
 import ReplyIndicatorContainer from '../containers/reply_indicator_container';
@@ -67,6 +68,7 @@ class ComposeForm extends ImmutablePureComponent {
     onPaste: PropTypes.func.isRequired,
     onPickEmoji: PropTypes.func.isRequired,
     autoFocus: PropTypes.bool,
+    onLaTeXStart: PropTypes.func.isRequired,
     anyMedia: PropTypes.bool,
     isInReply: PropTypes.bool,
     singleColumn: PropTypes.bool,
@@ -222,6 +224,12 @@ class ComposeForm extends ImmutablePureComponent {
     this.props.onPickEmoji(position, data, needsSpace);
   };
 
+  handleLaTeXStart = (data) => {
+      const position = this.autosuggestTextarea.textarea.selectionStart;
+
+      this.props.onLaTeXStart(position, data);
+  }
+
   render () {
     const { intl, onPaste, autoFocus } = this.props;
     const { highlighted } = this.state;
@@ -286,6 +294,7 @@ class ComposeForm extends ImmutablePureComponent {
             </div>
           </AutosuggestTextarea>
           <EmojiPickerDropdown onPickEmoji={this.handleEmojiPick} />
+          <LaTeXDropdown onPickLaTeX={this.handleLaTeXStart} />
 
           <div className='compose-form__buttons-wrapper'>
             <div className='compose-form__buttons'>
@@ -312,7 +321,16 @@ class ComposeForm extends ImmutablePureComponent {
             />
           </div>
         </div>
+<<<<<<< HEAD:app/javascript/mastodon/features/compose/components/compose_form.jsx
       </form>
+=======
+
+        <div className='compose-form__latex-hint'>
+            <p>Inline LaTeX: <code>\( code \)</code>.</p>
+            <p>Display-mode: <code>\[ code \]</code>.</p>
+        </div>
+      </div>
+>>>>>>> 7b91ff02c (adding a "start LaTeX" button):app/javascript/mastodon/features/compose/components/compose_form.js
     );
   }
 
