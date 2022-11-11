@@ -18,7 +18,6 @@ import EmojiPickerDropdown from '../containers/emoji_picker_dropdown_container';
 import LanguageDropdown from '../containers/language_dropdown_container';
 import PollButtonContainer from '../containers/poll_button_container';
 import LaTeXDropdown from '../containers/latex_dropdown_container';
-import LaTeXInputHint from '../components/latex_input_hint';
 import PollFormContainer from '../containers/poll_form_container';
 import PrivacyDropdownContainer from '../containers/privacy_dropdown_container';
 import ReplyIndicatorContainer from '../containers/reply_indicator_container';
