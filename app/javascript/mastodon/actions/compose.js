@@ -596,7 +596,10 @@ const fetchComposeSuggestionsLatex = (dispatch, getState, token) => {
         break;
     }
   }
-  for(;brace;brace--) {
+  for(;brace<0;brace++) {
+    expression = '{'+expression;
+  }
+  for(;brace>0;brace--) {
     expression += '}';
   }
   const results = [
