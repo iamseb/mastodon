@@ -171,6 +171,9 @@ class StatusContent extends PureComponent {
       return;
     }
     this.last_contentHtml = contentHtml;
+    if(!contentHtml.match(/\\[\(\[]/)) {
+      return;
+    }
     try {
       MathJax.typeset([this.node]);
     } catch(e) {
