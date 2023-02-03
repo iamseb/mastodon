@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { tex_to_unicode } from '../features/compose/util/autolatex/autolatex.js';
 
 const assetHost = process.env.CDN_HOST || '';
 
-export default class AutosuggestLatex extends React.PureComponent {
+export default class AutosuggestUnicodeMath extends React.PureComponent {
 
   static propTypes = {
     latex: PropTypes.object.isRequired,
@@ -13,23 +14,16 @@ export default class AutosuggestLatex extends React.PureComponent {
     this.node = c;
   }
 
-  componentDidMount() {
-    try {
-      MathJax.typeset([this.node]);
-    } catch(e) {
-      console.error(e);
-    }
-
-  }
-
   render () {
     const { latex } = this.props;
+    
+    const unicode = tex_to_unicode(latex.expression);
 
     return (
       <div className='autosuggest-latex' ref={this.setRef}>
-        \({latex.expression}\)
+        {unicode}
         <br/>
-        <small>LaTeX code</small>
+        <small>Convert to unicode</small>
       </div>
     );
   }

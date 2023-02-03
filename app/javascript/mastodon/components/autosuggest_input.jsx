@@ -11,6 +11,7 @@ import AutosuggestEmoji from './autosuggest_emoji';
 import { AutosuggestHashtag } from './autosuggest_hashtag';
 
 import AutosuggestLatex from './autosuggest_latex';
+import AutosuggestUnicodeMath from './autosuggest_unicodemath';
 
 const textAtCursorMatchesToken = (str, caretPosition, searchTokens) => {
   let word;
@@ -206,6 +207,9 @@ export default class AutosuggestInput extends ImmutablePureComponent {
     } else if (suggestion.type === 'latex') {
       inner = <AutosuggestLatex latex={suggestion} />;
       key   = 'latex'+suggestion.expression;
+    } else if (suggestion.type === 'unicodemath') {
+      inner = <AutosuggestUnicodeMath latex={suggestion} />;
+      key   = 'unicodemath'+suggestion.expression;
     }
 
     return (

@@ -57,6 +57,7 @@ import { TIMELINE_DELETE } from '../actions/timelines';
 import { me } from '../initial_state';
 import { unescapeHTML } from '../utils/html';
 import { uuid } from '../uuid';
+import { tex_to_unicode } from '../features/compose/util/autolatex/autolatex.js';
 
 const initialState = ImmutableMap({
   mounted: 0,
@@ -286,7 +287,13 @@ const normalizeSuggestions = (state, { accounts, emojis, tags, latex, token }) =
   } else if (emojis) {
     return emojis.map(item => ({ ...item, type: 'emoji' }));
   } else if (latex) {
-    return latex.map(item => ({ ...item, type: 'latex' }));
+    return latex.flatMap(item => {
+        const o = [{ ...item, type: 'latex' }];
+        if(tex_to_unicode(item.expression) !== undefined) {
+            o.splice(0,0,{ ...item, type: 'unicodemath' });
+        }
+        return o;
+    });
   } else {
     return mergeLocalHashtagResults(sortHashtagsByUse(state, tags.map(item => ({ ...item, type: 'hashtag' }))), token.slice(1), state.get('tagHistory'));
   }
