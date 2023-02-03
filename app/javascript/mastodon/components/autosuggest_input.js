@@ -1,6 +1,7 @@
 import React from 'react';
 import AutosuggestAccountContainer from '../features/compose/containers/autosuggest_account_container';
 import AutosuggestLatex from './autosuggest_latex';
+import AutosuggestUnicodeMath from './autosuggest_unicodemath';
 import AutosuggestEmoji from './autosuggest_emoji';
 import AutosuggestHashtag from './autosuggest_hashtag';
 import ImmutablePropTypes from 'react-immutable-proptypes';
@@ -200,6 +201,9 @@ export default class AutosuggestInput extends ImmutablePureComponent {
     } else if (suggestion.type === 'latex') {
       inner = <AutosuggestLatex latex={suggestion} />;
       key   = 'latex'+suggestion.expression;
+    } else if (suggestion.type === 'unicodemath') {
+      inner = <AutosuggestUnicodeMath latex={suggestion} />;
+      key   = 'unicodemath'+suggestion.expression;
     }
 
     return (
