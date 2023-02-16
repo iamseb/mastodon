@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Computer Modern Sans';
   src: url('cmunss.eot');
-  src: 
+  src:
     url('cmunss.eot?#iefix') format('embedded-opentype'),
     url('cmunss.woff') format('woff'),
     url('cmunss.ttf') format('truetype'),
@@ -13,7 +13,7 @@
 @font-face {
   font-family: 'Computer Modern Sans';
   src: url('cmunsx.eot');
-  src: 
+  src:
     url('cmunsx.eot?#iefix') format('embedded-opentype'),
     url('cmunsx.woff') format('woff'),
     url('cmunsx.ttf') format('truetype'),
