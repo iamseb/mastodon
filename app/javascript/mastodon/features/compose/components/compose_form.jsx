@@ -225,10 +225,10 @@ class ComposeForm extends ImmutablePureComponent {
   };
 
   handleLaTeXStart = (data) => {
-      const position = this.autosuggestTextarea.textarea.selectionStart;
+    const position = this.autosuggestTextarea.textarea.selectionStart;
 
-      this.props.onLaTeXStart(position, data);
-  }
+    this.props.onLaTeXStart(position, data);
+  };
 
   render () {
     const { intl, onPaste, autoFocus } = this.props;

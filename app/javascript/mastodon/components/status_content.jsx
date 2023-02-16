@@ -167,7 +167,7 @@ class StatusContent extends PureComponent {
   _renderMathJax () {
     const {status} = this.props;
     const contentHtml = status.get('contentHtml');
-    if(this.last_contentHtml == contentHtml) {
+    if(this.last_contentHtml === contentHtml) {
       return;
     }
     this.last_contentHtml = contentHtml;
@@ -175,7 +175,7 @@ class StatusContent extends PureComponent {
       return;
     }
     try {
-      MathJax.typeset([this.node]);
+      window.MathJax.typeset([this.node]);
     } catch(e) {
       console.error(e);
     }

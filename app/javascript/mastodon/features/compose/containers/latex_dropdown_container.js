@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import LaTeXDropdown from '../components/latex_dropdown';
-import { startLaTeXCompose } from '../../../actions/compose';
 import { openModal, closeModal } from '../../../actions/modal';
 import { isUserTouching } from '../../../is_mobile';
 

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Copyright (c) 2010 Sven Kreiss, Kyle Cranmer
 // Sven Kreiss <sk@svenkreiss.com>, Kyle Cranmer <kyle.cranmer@nyu.edu>
 // version 0.7.2

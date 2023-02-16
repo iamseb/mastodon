@@ -67,7 +67,7 @@ const mapDispatchToProps = (dispatch) => ({
 
   onLaTeXStart (position, data) {
     dispatch(startLaTeXCompose(position, data));
-  }
+  },
 
 });
 

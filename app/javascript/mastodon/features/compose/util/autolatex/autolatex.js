@@ -1,3 +1,4 @@
+/* eslint-disable */
 // Copyright (c) 2018 Christian Lawson-Perfect <christianperfect@gmail.com>
 // Based on the list of TeX to unicode replacements from UnicodeIt
 //
