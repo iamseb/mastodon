@@ -240,6 +240,14 @@ class LaTeXDropdown extends React.PureComponent {
     ];
   }
 
+  setTargetRef = c => {
+    this.target = c;
+  };
+
+  findTarget = () => {
+    return this.target;
+  };
+
   render () {
     const { value, container, disabled, intl, button } = this.props;
     const { open, placement } = this.state;
@@ -256,13 +264,19 @@ class LaTeXDropdown extends React.PureComponent {
           />}
         </div>
 
-        <Overlay show={open} placement={placement} target={this} container={container}>
-          <LaTeXDropdownMenu
-            items={this.options}
-            onClose={this.handleClose}
-            onChange={this.handleChange}
-            placement={placement}
-          />
+        <Overlay show={open} placement={placement} target={this.findTarget} container={container} popperConfig={{ strategy: 'fixed' }}>
+          {({ props, placement })=> (
+            <div {...props} style={{ ...props.style, width: 299 }}>
+              <div className={`dropdown-animation ${placement}`}>
+                <LaTeXDropdownMenu
+                  items={this.options}
+                  onClose={this.handleClose}
+                  onChange={this.handleChange}
+                  placement={placement}
+                />
+              </div>
+            </div>
+          )}
         </Overlay>
       </div>
     );
