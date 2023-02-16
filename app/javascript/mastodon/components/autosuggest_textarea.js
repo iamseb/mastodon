@@ -25,7 +25,7 @@ const textAtCursorMatchesToken = (str, caretPosition) => {
     /* Next: Try to find the end of the expression - either a closing or ending delimiter or something that looks like a word.
      *
      * Examples: (Caret position marked with the character |)
-     * 
+     *
      * Starting delimiter:  \( x| \(y\)         This looks like two separate expressions, and the user hasn't typed the closing delimiter of the leftmost one yet.
      * Closing delimier:    \( x| \)            The user is editing a correctly delimited expression.
      * Wordlike:            \( x| belongs to    The user is adding a LaTeX expression inside a passage of prose.

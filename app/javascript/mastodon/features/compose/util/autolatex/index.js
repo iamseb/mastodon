@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {tex_to_unicode, macros} from './autolatex.js';
 
 window.macros = macros;

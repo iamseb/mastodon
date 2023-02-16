@@ -10,7 +10,7 @@ import { useEmoji } from './emojis';
 import { importFetchedAccounts, importFetchedStatus } from './importer';
 import { openModal } from './modal';
 import { updateTimeline } from './timelines';
-import { tex_to_unicode } from '../features/compose/util/autolatex/autolatex.js';
+import { tex_to_unicode } from '../features/compose/util/autolatex/autolatex';
 
 /** @type {AbortController | undefined} */
 let fetchComposeSuggestionsAccountsController;
@@ -553,21 +553,21 @@ const fetchComposeSuggestionsTags = throttle((dispatch, getState, token) => {
 }, 200, { leading: true, trailing: true });
 
 const fetchComposeSuggestionsLatex = (dispatch, getState, token) => {
-  const start_delimiter = token.slice(0,2);
-  const end_delimiter = {'\\(': '\\)', '\\[': '\\]'}[start_delimiter];
-  let expression = token.slice(2).replace(/\\[\)\]]?$/,'');
+  const start_delimiter = token.slice(0, 2);
+  const end_delimiter = { '\\(': '\\)', '\\[': '\\]' }[start_delimiter];
+  let expression = token.slice(2).replace(/\\[\)\]]?$/, '');
   let brace = 0;
   for(let i=0;i<expression.length;i++) {
     switch(expression[i]) {
     case '\\':
-        i += 1;
-        break;
+      i += 1;
+      break;
     case '{':
-        brace += 1;
-        break;
+      brace += 1;
+      break;
     case '}':
-        brace -= 1;
-        break;
+      brace -= 1;
+      break;
     }
   }
   for(;brace<0;brace++) {
@@ -577,7 +577,7 @@ const fetchComposeSuggestionsLatex = (dispatch, getState, token) => {
     expression += '}';
   }
   const results = [
-    { start_delimiter, end_delimiter, expression }
+    { start_delimiter, end_delimiter, expression },
   ];
   dispatch(readyComposeSuggestionsLatex(token, results));
 };
@@ -607,7 +607,7 @@ export function readyComposeSuggestionsLatex(token, latex) {
     token,
     latex,
   };
-};
+}
 
 export function readyComposeSuggestionsEmojis(token, emojis) {
   return {
@@ -789,7 +789,7 @@ export function startLaTeXCompose(position, latex_style) {
     position,
     latex_style,
   };
-};
+}
 
 export function changeComposing(value) {
   return {

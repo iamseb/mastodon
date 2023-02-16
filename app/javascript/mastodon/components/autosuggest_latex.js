@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const assetHost = process.env.CDN_HOST || '';
-
 export default class AutosuggestLatex extends React.PureComponent {
 
   static propTypes = {
@@ -11,11 +9,11 @@ export default class AutosuggestLatex extends React.PureComponent {
 
   setRef = (c) => {
     this.node = c;
-  }
+  };
 
   componentDidMount() {
     try {
-      MathJax.typeset([this.node]);
+      window.MathJax.typeset([this.node]);
     } catch(e) {
       console.error(e);
     }
@@ -28,7 +26,7 @@ export default class AutosuggestLatex extends React.PureComponent {
     return (
       <div className='autosuggest-latex' ref={this.setRef}>
         \({latex.expression}\)
-        <br/>
+        <br />
         <small>LaTeX code</small>
       </div>
     );

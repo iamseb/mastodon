@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, defineMessages } from 'react-intl';
-import IconButton from '../../../components/icon_button';
 import Overlay from 'react-overlays/Overlay';
 import Motion from '../../ui/util/optional_motion';
 import spring from 'react-motion/lib/spring';
@@ -24,6 +23,7 @@ class LaTeXDropdownMenu extends React.PureComponent {
 
   static propTypes = {
     style: PropTypes.object,
+    value: PropTypes.string,
     items: PropTypes.array.isRequired,
     placement: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -38,7 +38,7 @@ class LaTeXDropdownMenu extends React.PureComponent {
     if (this.node && !this.node.contains(e.target)) {
       this.props.onClose();
     }
-  }
+  };
 
   handleKeyDown = e => {
     const { items } = this.props;
@@ -82,7 +82,7 @@ class LaTeXDropdownMenu extends React.PureComponent {
       e.preventDefault();
       e.stopPropagation();
     }
-  }
+  };
 
   handleClick = e => {
     const value = e.currentTarget.getAttribute('data-index');
@@ -91,7 +91,7 @@ class LaTeXDropdownMenu extends React.PureComponent {
 
     this.props.onClose();
     this.props.onChange(value);
-  }
+  };
 
   componentDidMount () {
     document.addEventListener('click', this.handleDocumentClick, false);
@@ -107,11 +107,11 @@ class LaTeXDropdownMenu extends React.PureComponent {
 
   setRef = c => {
     this.node = c;
-  }
+  };
 
   setFocusRef = c => {
     this.focusedItem = c;
-  }
+  };
 
   render () {
     const { mounted } = this.state;
@@ -153,6 +153,7 @@ export default @injectIntl
 class LaTeXDropdown extends React.PureComponent {
 
   static propTypes = {
+    value: PropTypes.string,
     isUserTouching: PropTypes.func,
     onModalOpen: PropTypes.func,
     onModalClose: PropTypes.func,
@@ -186,7 +187,7 @@ class LaTeXDropdown extends React.PureComponent {
       this.setState({ placement: top * 2 < innerHeight ? 'bottom' : 'top' });
       this.setState({ open: !this.state.open });
     }
-  }
+  };
 
   handleModalActionClick = (e) => {
     e.preventDefault();
@@ -195,7 +196,7 @@ class LaTeXDropdown extends React.PureComponent {
 
     this.props.onModalClose();
     this.props.onChange(value);
-  }
+  };
 
   handleKeyDown = e => {
     switch(e.key) {
@@ -203,13 +204,13 @@ class LaTeXDropdown extends React.PureComponent {
       this.handleClose();
       break;
     }
-  }
+  };
 
   handleMouseDown = () => {
     if (!this.state.open) {
       this.activeElement = document.activeElement;
     }
-  }
+  };
 
   handleButtonKeyDown = (e) => {
     switch(e.key) {
@@ -218,18 +219,18 @@ class LaTeXDropdown extends React.PureComponent {
       this.handleMouseDown();
       break;
     }
-  }
+  };
 
   handleClose = () => {
     if (this.state.open && this.activeElement) {
       this.activeElement.focus({ preventScroll: true });
     }
     this.setState({ open: false });
-  }
+  };
 
   handleChange = value => {
     this.props.onChange(value);
-  }
+  };
 
   componentWillMount () {
     const { intl: { formatMessage } } = this.props;
@@ -249,7 +250,7 @@ class LaTeXDropdown extends React.PureComponent {
   };
 
   render () {
-    const { value, container, disabled, intl, button } = this.props;
+    const { container, intl, button } = this.props;
     const { open, placement } = this.state;
 
     const title = intl.formatMessage(messages.start_latex);
