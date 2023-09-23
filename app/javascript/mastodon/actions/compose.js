@@ -1,5 +1,4 @@
 import { defineMessages } from 'react-intl';
-import { tex_to_unicode } from '../features/compose/util/autolatex/autolatex.js';
 
 import axios from 'axios';
 import { throttle } from 'lodash';
