@@ -89,9 +89,9 @@ class Sanitize
       annotation = semantics.children.find(&is_annotation_with_encoding.curry['application/x-tex'])
       if annotation
         if math.attributes['display']&.value == 'block'
-          math.swap("$$#{annotation.content}$$")
+          math.swap("\\[#{annotation.content}\\]")
         else
-          math.swap("$#{annotation.content}$")
+          math.swap("\\(#{annotation.content}\\)")
         end
         return
       end
