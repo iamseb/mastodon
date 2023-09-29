@@ -165,7 +165,7 @@ class StatusContent extends PureComponent {
   };
 
   _renderMathJax () {
-    const {status} = this.props;
+    const { status } = this.props;
     const contentHtml = status.get('contentHtml');
     if(this.last_contentHtml === contentHtml) {
       return;
@@ -183,6 +183,7 @@ class StatusContent extends PureComponent {
 
   componentDidMount () {
     this._updateStatusLinks();
+    this._renderMathJax();
   }
 
   componentDidUpdate () {
