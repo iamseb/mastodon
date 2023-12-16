@@ -1,12 +1,15 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { injectIntl, defineMessages } from 'react-intl';
-import Overlay from 'react-overlays/Overlay';
-import Motion from '../../ui/util/optional_motion';
-import spring from 'react-motion/lib/spring';
-import { supportsPassiveEvents } from 'detect-passive-events';
+import { PureComponent } from 'react';
+
+import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
+
 import classNames from 'classnames';
-import { Icon } from 'mastodon/components/icon';
+
+import ImmutablePropTypes from 'react-immutable-proptypes';
+
+import { supportsPassiveEvents } from 'detect-passive-events';
+import Overlay from 'react-overlays/Overlay';
+
 import { assetHost } from 'mastodon/utils/config';
 
 const messages = defineMessages({
@@ -17,21 +20,21 @@ const messages = defineMessages({
   start_latex:  { id: 'latex.start', defaultMessage: 'Start writing LaTeX' },
 });
 
-const listenerOptions = supportsPassiveEvents ? { passive: true } : false;
+const listenerOptions = supportsPassiveEvents ? { passive: true, capture: true } : true;
 
-class LaTeXDropdownMenu extends React.PureComponent {
-
+class LaTeXDropdownMenuImpl extends PureComponent {
   static propTypes = {
     style: PropTypes.object,
-    value: PropTypes.string,
-    items: PropTypes.array.isRequired,
-    placement: PropTypes.string.isRequired,
-    onClose: PropTypes.func.isRequired,
-    onChange: PropTypes.func.isRequired,
+    onPick: PropTypes.func.isRequired,
+    intl: PropTypes.object.isRequired,
+    button: PropTypes.node,
+  };
+
+  static defaultProps = {
+    style: {},
   };
 
   state = {
-    mounted: false,
   };
 
   handleDocumentClick = e => {
@@ -40,68 +43,13 @@ class LaTeXDropdownMenu extends React.PureComponent {
     }
   };
 
-  handleKeyDown = e => {
-    const { items } = this.props;
-    const value = e.currentTarget.getAttribute('data-index');
-    const index = items.findIndex(item => {
-      return (item.value === value);
-    });
-    let element = null;
-
-    switch(e.key) {
-    case 'Escape':
-      this.props.onClose();
-      break;
-    case 'Enter':
-      this.handleClick(e);
-      break;
-    case 'ArrowDown':
-      element = this.node.childNodes[index + 1] || this.node.firstChild;
-      break;
-    case 'ArrowUp':
-      element = this.node.childNodes[index - 1] || this.node.lastChild;
-      break;
-    case 'Tab':
-      if (e.shiftKey) {
-        element = this.node.childNodes[index - 1] || this.node.lastChild;
-      } else {
-        element = this.node.childNodes[index + 1] || this.node.firstChild;
-      }
-      break;
-    case 'Home':
-      element = this.node.firstChild;
-      break;
-    case 'End':
-      element = this.node.lastChild;
-      break;
-    }
-
-    if (element) {
-      element.focus();
-      this.props.onChange(element.getAttribute('data-index'));
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  };
-
-  handleClick = e => {
-    const value = e.currentTarget.getAttribute('data-index');
-
-    e.preventDefault();
-
-    this.props.onClose();
-    this.props.onChange(value);
-  };
-
   componentDidMount () {
-    document.addEventListener('click', this.handleDocumentClick, false);
+    document.addEventListener('click', this.handleDocumentClick, { capture: true });
     document.addEventListener('touchend', this.handleDocumentClick, listenerOptions);
-    if (this.focusedItem) this.focusedItem.focus({ preventScroll: true });
-    this.setState({ mounted: true });
   }
 
   componentWillUnmount () {
-    document.removeEventListener('click', this.handleDocumentClick, false);
+    document.removeEventListener('click', this.handleDocumentClick, { capture: true });
     document.removeEventListener('touchend', this.handleDocumentClick, listenerOptions);
   }
 
@@ -109,136 +57,107 @@ class LaTeXDropdownMenu extends React.PureComponent {
     this.node = c;
   };
 
-  setFocusRef = c => {
-    this.focusedItem = c;
+  getI18n = () => {
+    const { intl } = this.props;
+
+    return {
+      inline_short: intl.formatMessage(messages.inline_short),
+      inline_long: intl.formatMessage(messages.inline_long),
+      display_short: intl.formatMessage(messages.display_short),
+      display_long: intl.formatMessage(messages.display_long),
+      start_latex: intl.formatMessage(messages.start_latex),
+    };
   };
 
+  handleClick = (delimiter, event) => {
+    if (!(event.ctrlKey || event.metaKey)) {
+      this.props.onClose();
+    }
+    this.props.onPick(delimiter);
+  };
+
+
   render () {
-    const { mounted } = this.state;
-    const { style, items, placement, value } = this.props;
+    const { intl, style, button, onPick } = this.props;
+
+    const items = [
+      { icon: 'inline-mode', value: 'inline', text: intl.formatMessage(messages.inline_short), meta: intl.formatMessage(messages.inline_long) },
+      { icon: 'display-mode', value: 'display', text: intl.formatMessage(messages.display_short), meta: intl.formatMessage(messages.display_long) },
+    ];
 
     return (
-      <Motion defaultStyle={{ opacity: 0, scaleX: 0.85, scaleY: 0.75 }} style={{ opacity: spring(1, { damping: 35, stiffness: 400 }), scaleX: spring(1, { damping: 35, stiffness: 400 }), scaleY: spring(1, { damping: 35, stiffness: 400 }) }}>
-        {({ opacity, scaleX, scaleY }) => (
-          // It should not be transformed when mounting because the resulting
-          // size will be used to determine the coordinate of the menu by
-          // react-overlays
-          <div className={`latex-dropdown__dropdown ${placement}`} style={{ ...style, opacity: opacity, transform: mounted ? `scale(${scaleX}, ${scaleY})` : null }} role='listbox' ref={this.setRef}>
-            {items.map(item => (
-              <div role='option' tabIndex='0' key={item.value} data-index={item.value} onKeyDown={this.handleKeyDown} onClick={this.handleClick} className={classNames('latex-dropdown__option', { active: item.value === value })} aria-selected={item.value === value} ref={item.value === value ? this.setFocusRef : null}>
-                <div className='latex-dropdown__option__icon'>
-                  <img
-                    className={classNames('latex-icon')}
-                    alt={item.value}
-                    src={`${assetHost}/latex/${item.icon}.svg`}
-                  />
-                  <Icon id={item.icon} fixedWidth />
-                </div>
+      <div className={`latex-dropdown__menu`} style={style} ref={this.setRef}>
+        {items.map(item => (
+          <div role='option' tabIndex='0' key={item.value} data-index={item.value} onKeyDown={this.handleKeyDown} onClick={(e) => {this.handleClick(item.value, e)}} className={'latex-dropdown__option'}>
+            <div className='latex-dropdown__option__icon'>
+              {button || <img
+                className={'latex-icon'}
+                alt={item.value}
+                src={`${assetHost}/latex/${item.icon}.svg`}
+              />}
+            </div>
 
-                <div className='latex-dropdown__option__content'>
-                  <strong>{item.text}</strong>
-                  {item.meta}
-                </div>
-              </div>
-            ))}
+            <div className='latex-dropdown__option__content'>
+              <strong>{item.text}</strong>
+              {item.meta}
+            </div>
           </div>
-        )}
-      </Motion>
+        ))}
+      </div>
     );
   }
 
 }
 
-class LaTeXDropdown extends React.PureComponent {
+const LaTeXDropdownMenu = injectIntl(LaTeXDropdownMenuImpl);
+
+class LaTeXDropdown extends PureComponent {
 
   static propTypes = {
-    value: PropTypes.string,
-    isUserTouching: PropTypes.func,
-    onModalOpen: PropTypes.func,
-    onModalClose: PropTypes.func,
-    onChange: PropTypes.func.isRequired,
-    container: PropTypes.func,
-    disabled: PropTypes.bool,
+    onPickLaTeX: PropTypes.func.isRequired,
     intl: PropTypes.object.isRequired,
     button: PropTypes.node,
   };
 
   state = {
-    open: false,
-    placement: 'bottom',
+    active: false,
   };
 
-  handleToggle = ({ target }) => {
-    if (this.props.isUserTouching && this.props.isUserTouching()) {
-      if (this.state.open) {
-        this.props.onModalClose();
+  setRef = (c) => {
+    this.dropdown = c;
+  };
+
+  onShowDropdown = () => {
+    this.setState({ active: true });
+  };
+
+  onHideDropdown = () => {
+    this.setState({ active: false });
+  };
+
+  onToggle = (e) => {
+    if (!e.key || e.key === 'Enter') {
+      if (this.state.active) {
+        this.onHideDropdown();
       } else {
-        this.props.onModalOpen({
-          actions: this.options.map(option => ({ ...option, active: option.value === this.props.value })),
-          onClick: this.handleModalActionClick,
-        });
+        this.onShowDropdown(e);
       }
-    } else {
-      const { top } = target.getBoundingClientRect();
-      if (this.state.open && this.activeElement) {
-        this.activeElement.focus({ preventScroll: true });
-      }
-      this.setState({ placement: top * 2 < innerHeight ? 'bottom' : 'top' });
-      this.setState({ open: !this.state.open });
     }
-  };
-
-  handleModalActionClick = (e) => {
-    e.preventDefault();
-
-    const { value } = this.options[e.currentTarget.getAttribute('data-index')];
-
-    this.props.onModalClose();
-    this.props.onChange(value);
   };
 
   handleKeyDown = e => {
-    switch(e.key) {
-    case 'Escape':
-      this.handleClose();
-      break;
+    if (e.key === 'Escape') {
+      this.onHideDropdown();
     }
   };
 
-  handleMouseDown = () => {
-    if (!this.state.open) {
-      this.activeElement = document.activeElement;
-    }
+  setTargetRef = c => {
+    this.target = c;
   };
 
-  handleButtonKeyDown = (e) => {
-    switch(e.key) {
-    case ' ':
-    case 'Enter':
-      this.handleMouseDown();
-      break;
-    }
+  findTarget = () => {
+    return this.target;
   };
-
-  handleClose = () => {
-    if (this.state.open && this.activeElement) {
-      this.activeElement.focus({ preventScroll: true });
-    }
-    this.setState({ open: false });
-  };
-
-  handleChange = value => {
-    this.props.onChange(value);
-  };
-
-  componentWillMount () {
-    const { intl: { formatMessage } } = this.props;
-
-    this.options = [
-      { icon: 'inline-mode', value: 'inline', text: formatMessage(messages.inline_short), meta: formatMessage(messages.inline_long) },
-      { icon: 'display-mode', value: 'display', text: formatMessage(messages.display_short), meta: formatMessage(messages.display_long) },
-    ];
-  }
 
   setTargetRef = c => {
     this.target = c;
@@ -249,14 +168,14 @@ class LaTeXDropdown extends React.PureComponent {
   };
 
   render () {
-    const { container, intl, button } = this.props;
-    const { open, placement } = this.state;
+    const { container, intl, button, onPickLaTeX } = this.props;
+    const { active } = this.state;
 
     const title = intl.formatMessage(messages.start_latex);
 
     return (
-      <div className={classNames('latex-dropdown', placement, { active: open })} onKeyDown={this.handleKeyDown}>
-        <div ref={this.setTargetRef} className='latex-button' title={title} aria-label={title} aria-expanded={open} role='button' onClick={this.handleToggle} onKeyDown={this.handleButtonKeyDown} onMouseDown={this.handleMouseDown} tabIndex={0}>
+      <div className='latex-dropdown' onKeyDown={this.handleKeyDown}>
+        <div ref={this.setTargetRef} className='latex-button' title={title} aria-label={title} aria-expanded={active} role='button' onClick={this.onToggle} onKeyDown={this.onToggle} tabIndex={0}>
           {button || <img
             className={classNames('latex-icon')}
             alt='𝑥'
@@ -264,15 +183,13 @@ class LaTeXDropdown extends React.PureComponent {
           />}
         </div>
 
-        <Overlay show={open} placement={placement} target={this.findTarget} container={container} popperConfig={{ strategy: 'fixed' }}>
+        <Overlay show={active} placement={'bottom'} target={this.findTarget} popperConfig={{ strategy: 'fixed' }}>
           {({ props, placement })=> (
             <div {...props} style={{ ...props.style, width: 299 }}>
               <div className={`dropdown-animation ${placement}`}>
                 <LaTeXDropdownMenu
-                  items={this.options}
-                  onClose={this.handleClose}
-                  onChange={this.handleChange}
-                  placement={placement}
+                  onClose={this.onHideDropdown}
+                  onPick={onPickLaTeX}
                 />
               </div>
             </div>
