@@ -123,7 +123,7 @@ class Sanitize
     end
 
     MASTODON_STRICT ||= freeze_config(
-      elements: %w(p br span a del pre blockquote code b strong u i em ul ol li) + MATH_TAG_ATTRS.keys,
+      elements: %w(p br span a del s pre blockquote code b strong u i em ul ol li) + MATH_TAG_ATTRS.keys,
 
       attributes: {
         'a' => %w(href rel class translate),
