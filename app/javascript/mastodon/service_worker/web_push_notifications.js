@@ -4,7 +4,7 @@ import { unescape } from 'lodash';
 
 import locales from './web_push_locales';
 
-const MAX_NOTIFICATIONS = 5;
+const MAX_NOTIFICATIONS = 6;
 const GROUP_TAG = 'tag';
 
 const notify = options =>
