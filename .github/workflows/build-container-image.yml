@@ -74,7 +74,7 @@ jobs:
           password: ${{ secrets.SCALEWAY_API_KEY }}
   
         
-      - name: meta
+      - name: Docker meta
         uses: docker/metadata-action@v5
         id: meta
         if: ${{ inputs.push_to_images != '' }}
