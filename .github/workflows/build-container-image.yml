@@ -24,7 +24,7 @@ on:
 # The two-step process is adapted form:
 # https://docs.docker.com/build/ci/github-actions/multi-platform/#distribute-build-across-multiple-runners
 jobs:
-  # Build each (amd784 and arm64) image separately
+  # Build each (amd64 and arm64) image separately
   build-image:
     runs-on: ${{ startsWith(matrix.platform, 'linux/arm') && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     strategy:
@@ -57,6 +57,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Log in to the Scaleway Container registry
+        if: contains(inputs.push_to_images, 'scw.cloud')
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.SCALEWAY_ENDPOINT }}
+          username: nologin
+          password: ${{ secrets.SCALEWAY_API_KEY }}          
+
       - name: Log in to the GitHub Container registry
         if: contains(inputs.push_to_images, 'ghcr.io')
         uses: docker/login-action@v3
@@ -65,18 +73,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Log in to the Scaleway Container registry
-        if: contains(inputs.push_to_images, 'scw.cloud')
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ secrets.SCALEWAY_ENDPOINT }}
-          username: nologin
-          password: ${{ secrets.SCALEWAY_API_KEY }}
-  
-        
       - name: Docker meta
-        uses: docker/metadata-action@v5
         id: meta
+        uses: docker/metadata-action@v5
         if: ${{ inputs.push_to_images != '' }}
         with:
           images: ${{ inputs.push_to_images }}
@@ -145,6 +144,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Log in to the Scaleway Container registry
+        if: contains(inputs.push_to_images, 'scw.cloud')
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.SCALEWAY_ENDPOINT }}
+          username: nologin
+          password: ${{ secrets.SCALEWAY_API_KEY }}          
+
       - name: Log in to the GitHub Container registry
         if: contains(inputs.push_to_images, 'ghcr.io')
         uses: docker/login-action@v3
@@ -152,16 +159,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Log in to the Scaleway Container registry
-        if: contains(inputs.push_to_images, 'scw.cloud')
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ secrets.SCALEWAY_ENDPOINT }}
-          username: nologin
-          password: ${{ secrets.SCALEWAY_API_KEY }}
-    
-  
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -187,3 +184,4 @@ jobs:
         run: |
           echo "$PUSH_TO_IMAGES" | xargs -i{} \
             docker buildx imagetools inspect {}:${{ steps.meta.outputs.version }}
+
